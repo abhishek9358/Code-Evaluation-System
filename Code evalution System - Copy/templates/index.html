@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Questions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+        }
+        .question-grid a {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .question-grid a.attempted {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .question-grid a:hover {
+            background-color: #e2e6ea;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 20%;
+            padding-right: 20px;
+        }
+        .content {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h4>Questions</h4>
+            <div class="question-grid">
+                {% for i in range(num_questions) %}
+                    <a href="{{ url_for('question', question_index=i) }}" class="{% if i in attempts %}attempted{% endif %}">{{ i + 1 }}</a>
+                {% endfor %}
+            </div>
+            <h5>Total Score: {{ total_score }}%</h5>
+        </div>
+        <div class="content">
+            <h3>Question {{ question_index + 1 }}</h3>
+            <p>{{ instruction }}</p>
+            <form method="post" action="{{ url_for('index', question_index=question_index) }}">
+                <div class="form-group">
+                    <label for="user_code">Your Code:</label>
+                    <textarea class="form-control" id="user_code" name="user_code" rows="10"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            {% if show_result %}
+                <div class="mt-4">
+                    <h5>Similarity Score: {{ score }}%</h5>
+                    <h5>Expected Output:</h5>
+                    <pre>{{ expected_output }}</pre>
+                </div>
+            {% endif %}
+            <div class="mt-4">
+                <form method="post" action="{{ url_for('next_question') }}">
+                    <input type="hidden" name="question_index" value="{{ question_index }}">
+                    <button type="submit" class="btn btn-secondary">Next Question</button>
+                </form>
+                <a href="{{ url_for('question', question_index=0) }}" class="btn btn-secondary">First Question</a>
+                <a href="{{ url_for('question', question_index=num_questions - 1) }}" class="btn btn-secondary">Last Question</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
